@@ -19,12 +19,12 @@ namespace AudioSender_Receiver1
 
         string MyIP = "192.168.0.13";
         string IPToSend = "192.168.0.15";
-        int PortToSendVoice = 4444;
-        int PortToListenVoice = 5656;
-        int PortToSendText = 7777;
-        int PortToReceiveText = 5556;
-        int PortToSendForVoiceConnect = 5566;
-        int PortToReceiveForVoiceConnect = 5555;
+        int PortToSendVoice = 5656;
+        int PortToListenVoice = 4444;
+        int PortToSendText = 5556;
+        int PortToReceiveText = 7777;
+        int PortToSendForVoiceConnect = 5555;
+        int PortToReceiveForVoiceConnect = 5566;
         bool VoiceConnected;
 
         VoiceReceiver VoiceProcesser;
@@ -63,7 +63,6 @@ namespace AudioSender_Receiver1
             }
             else if (mes == "Submit")
             {
-                MessageBox.Show("Connection established");
                 this.BeginInvoke((Action)(() =>
                 {
                     VoiceConnected = true;
@@ -71,12 +70,23 @@ namespace AudioSender_Receiver1
                     buttonFinishCall.Enabled = true;
                     VoiceProcesser = new VoiceReceiver(PortToSendVoice, PortToListenVoice, IPToSend);
                 }));
+                MessageBox.Show("Connection established");
             }
-            else
+            else if (mes == "Reject")
             {
                 MessageBox.Show("Call rejected");
             }
-
+            else if (mes == "Finished")
+            {
+                this.BeginInvoke((Action)(() =>
+                {
+                    VoiceConnected = false; ;
+                    VoiceProcesser.Free();
+                    buttonFinishCall.Enabled = false;
+                    buttonStartCall.Enabled = true;
+                }));
+                MessageBox.Show("Call finished");
+            }
         }
 
         private void HandlerMessage(string message)
@@ -144,7 +154,7 @@ namespace AudioSender_Receiver1
             catch (Exception ex)
             {
             }
-            
+
         }
 
         private void button2_Click(object sender, EventArgs e)
@@ -153,6 +163,7 @@ namespace AudioSender_Receiver1
             VoiceProcesser.Free();
             buttonFinishCall.Enabled = false;
             buttonStartCall.Enabled = true;
+            VoiceConnectionSubmiter.Send("Finished");
         }
     }
 }
