@@ -25,11 +25,11 @@ namespace AudioSender_Receiver1
         int PortToReceiveText = 5556;
         int PortToSendForVoiceConnect = 5566;
         int PortToReceiveForVoiceConnect = 5555;
+        bool VoiceConnected;
 
         VoiceReceiver VoiceProcesser;
         TextReceiver TextProcesser;
         TextReceiver VoiceConnectionSubmiter;
-        bool requestVoiceConnection;
 
         public delegate void ProcessReceived(string message);
 
@@ -48,10 +48,11 @@ namespace AudioSender_Receiver1
                 if (result == DialogResult.Yes)
                 {
                     VoiceConnectionSubmiter.Send("Submit");
-                  /*  VoiceProcesser.Free();
-                    VoiceProcesser = null;*/
                     this.BeginInvoke((Action)(() =>
                     {
+                        VoiceConnected = true;
+                        buttonStartCall.Enabled = false;
+                        buttonFinishCall.Enabled = true;
                         VoiceProcesser = new VoiceReceiver(PortToSendVoice, PortToListenVoice, IPToSend);
                     }));
                 }
@@ -62,19 +63,17 @@ namespace AudioSender_Receiver1
             }
             else if (mes == "Submit")
             {
-                requestVoiceConnection = true;
                 MessageBox.Show("Connection established");
-               /* VoiceProcesser = null;*/
                 this.BeginInvoke((Action)(() =>
                 {
+                    VoiceConnected = true;
+                    buttonStartCall.Enabled = false;
+                    buttonFinishCall.Enabled = true;
                     VoiceProcesser = new VoiceReceiver(PortToSendVoice, PortToListenVoice, IPToSend);
                 }));
-
-
             }
             else
             {
-                requestVoiceConnection = false;
                 MessageBox.Show("Call rejected");
             }
 
@@ -84,7 +83,7 @@ namespace AudioSender_Receiver1
         {
             this.BeginInvoke((Action)(() =>
             {
-                TextPanel.Text += "me: " + message + "\n";
+                TextPanel.Text += message + Environment.NewLine;
             }));
 
         }
@@ -92,6 +91,7 @@ namespace AudioSender_Receiver1
         public Form1()
         {
             InitializeComponent();
+            VoiceConnected = false;
             TextProcesser = new TextReceiver(PortToSendText, PortToReceiveText, IPToSend, HandlerMessage);
             VoiceConnectionSubmiter = new TextReceiver(PortToSendForVoiceConnect, PortToReceiveForVoiceConnect, IPToSend, HadlerRequestForVoiceConnect);
         }
@@ -101,16 +101,17 @@ namespace AudioSender_Receiver1
             VoiceConnectionSubmiter.Send("Take a call?");
         }
 
-        private void SendTextMessage(object message)
-        {
-            TextProcesser.Send(message);
-        }
-
         private void button1_Click(object sender, EventArgs e)
         {
             try
             {
-                TextProcesser.Send((object)InputText.Text);
+                TextPanel.Text += "me: " + InputText.Text + Environment.NewLine;
+                string user = userName.Text;
+                if (userName.Text == "")
+                {
+                    user = "Anonimus";
+                }
+                TextProcesser.Send((object)($"{user}: {InputText.Text}"));
 
             }
             catch (Exception ex)
@@ -123,32 +124,35 @@ namespace AudioSender_Receiver1
         {
             try
             {
-                if (VoiceConnectionSubmiter != null)
+                if (VoiceConnected)
                 {
-                    VoiceConnectionSubmiter.Free();
+                    if (VoiceConnectionSubmiter != null)
+                    {
+                        VoiceConnectionSubmiter.Free();
+                    }
+                    if (VoiceProcesser != null)
+                    {
+                        VoiceProcesser.Free();
+                    }
+                    if (TextProcesser != null)
+                    {
+                        TextProcesser.Free();
+                    }
                 }
-                if (VoiceProcesser != null)
-                {
-                    VoiceProcesser.Free();
-                }
-                if (TextProcesser != null)
-                {
-                    TextProcesser.Free();
-                }
-
+                System.Diagnostics.Process.GetCurrentProcess().Kill();
             }
             catch (Exception ex)
             {
-
             }
+            
         }
 
         private void button2_Click(object sender, EventArgs e)
         {
-
-                VoiceProcesser.Free();
-
-            
+            VoiceConnected = false; ;
+            VoiceProcesser.Free();
+            buttonFinishCall.Enabled = false;
+            buttonStartCall.Enabled = true;
         }
     }
 }

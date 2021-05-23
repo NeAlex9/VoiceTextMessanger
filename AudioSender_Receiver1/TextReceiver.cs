@@ -55,22 +55,17 @@ namespace AudioSender_Receiver1
                     }
                     while (SocketToListen.Available > 0);
                     IPEndPoint remoteFullIp = remoteIp as IPEndPoint;
-
                     SendedMessageHandler.Invoke(builder.ToString());
-                    /*this.BeginInvoke((Action)(() =>
-                    {
-                        TextPanel.Text += "me: " + builder.ToString() + "\n";
-                    }));*/
                 }
             }
             catch (Exception ex)
             {
-                /*throw;*/
             }
         }
 
         public override void Free()
         {
+            connected = false;
             SocketToListen.Close();
             SocketToListen.Dispose();
 

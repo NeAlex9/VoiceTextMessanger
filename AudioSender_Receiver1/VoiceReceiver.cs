@@ -71,8 +71,12 @@ namespace AudioSender_Receiver1
                 while (connected == true)
                 {
                     byte[] data = new byte[65535];
-                    int received = SocketToListen.ReceiveFrom(data, ref remoteIp);
-                    bufferStream.AddSamples(data, 0, received);
+                    int received = 0;
+                    if (SocketToListen!= null)
+                    {
+                        received = SocketToListen.ReceiveFrom(data, ref remoteIp);
+                    }
+                    bufferStream?.AddSamples(data, 0, received);
                 }
             }
             catch (SocketException ex) when (ex.ErrorCode == 10004)
@@ -81,7 +85,7 @@ namespace AudioSender_Receiver1
             }
             catch (Exception ex)
             {
-               /* throw;*/
+               
             }
         }
 
