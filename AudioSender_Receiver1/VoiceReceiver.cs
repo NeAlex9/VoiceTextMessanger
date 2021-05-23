@@ -14,25 +14,17 @@ using System.Windows.Forms;
 
 namespace AudioSender_Receiver1
 {
-    class VoiceReceiver
+    public class VoiceReceiver : NetworkReceiver
     {
-        public string IPToSend { get; private set; }
-        public int PortToSend { get; private set; }
-        public int PortToListen { get; private set; }
         public WaveIn input { get; private set; }
         public WaveOut output { get; private set; }
         public BufferedWaveProvider bufferStream { get; private set; }
-        public Socket SocketToListen { get; private set; }
-        public Socket SocketToSend { get; private set; }
 
-        private bool connected;
-        
         public VoiceReceiver(int portToSend, int portToListen, string ipToSend)
         {
             PortToSend = portToSend;
             PortToListen = portToListen;
             IPToSend = ipToSend;
-
             input = new WaveIn();
             input.WaveFormat = new WaveFormat(8000, 16, 1);
             input.DataAvailable += Voice_Input;
@@ -41,7 +33,7 @@ namespace AudioSender_Receiver1
             output.Init(bufferStream);
             SocketToSend = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
             SocketToListen = new Socket(AddressFamily.InterNetwork, SocketType.Dgram, ProtocolType.Udp);
-            new Thread(new ThreadStart(ListeningForVoice)).Start();
+            new Thread(new ThreadStart(StartListening)).Start();
             connected = true;
             input.StartRecording();
         }
@@ -50,17 +42,25 @@ namespace AudioSender_Receiver1
         {
             try
             {
-                IPEndPoint remote_point = new IPEndPoint(IPAddress.Parse(IPToSend), PortToSend);
-                IPEndPoint remote_poin = new IPEndPoint(324, PortToSend);
-                SocketToSend.SendTo(e.Buffer, remote_point);
+                if (SocketToSend != null)
+                {
+                    IPEndPoint remote_point = new IPEndPoint(IPAddress.Parse(IPToSend), PortToSend);
+                    IPEndPoint remote_poin = new IPEndPoint(324, PortToSend);
+                    SocketToSend.SendTo(e.Buffer, remote_point);
+                }
             }
             catch (Exception ex)
             {
-                throw;
+              
             }
         }
 
-        private void ListeningForVoice()
+        public void Send()
+        {
+            input.StartRecording();
+        }
+
+        public void StartListening()
         {
             try
             {
@@ -81,18 +81,20 @@ namespace AudioSender_Receiver1
             }
             catch (Exception ex)
             {
-                throw;
+               /* throw;*/
             }
         }
 
-        public void Free()
+        public override void Free()
         {
             connected = false;
             SocketToListen.Close();
             SocketToListen.Dispose();
+            SocketToListen = null;
 
             SocketToSend.Close();
             SocketToSend.Dispose();
+            SocketToSend = null;
 
             if (output != null)
             {

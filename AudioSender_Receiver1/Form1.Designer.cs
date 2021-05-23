@@ -28,22 +28,23 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.buttonRecord = new System.Windows.Forms.Button();
+            this.buttonStartCall = new System.Windows.Forms.Button();
             this.TextPanel = new System.Windows.Forms.TextBox();
             this.InputText = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.button1 = new System.Windows.Forms.Button();
+            this.buttonFinishCall = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
-            // buttonRecord
+            // buttonStartCall
             // 
-            this.buttonRecord.Location = new System.Drawing.Point(52, 12);
-            this.buttonRecord.Name = "buttonRecord";
-            this.buttonRecord.Size = new System.Drawing.Size(149, 48);
-            this.buttonRecord.TabIndex = 0;
-            this.buttonRecord.Text = "Click me";
-            this.buttonRecord.UseVisualStyleBackColor = true;
-            this.buttonRecord.Click += new System.EventHandler(this.buttonRecord_Click_1);
+            this.buttonStartCall.Location = new System.Drawing.Point(52, 12);
+            this.buttonStartCall.Name = "buttonStartCall";
+            this.buttonStartCall.Size = new System.Drawing.Size(149, 48);
+            this.buttonStartCall.TabIndex = 0;
+            this.buttonStartCall.Text = "Sart call";
+            this.buttonStartCall.UseVisualStyleBackColor = true;
+            this.buttonStartCall.Click += new System.EventHandler(this.buttonRecord_Click_1);
             // 
             // TextPanel
             // 
@@ -80,16 +81,27 @@
             this.button1.UseVisualStyleBackColor = true;
             this.button1.Click += new System.EventHandler(this.button1_Click);
             // 
+            // buttonFinishCall
+            // 
+            this.buttonFinishCall.Location = new System.Drawing.Point(246, 12);
+            this.buttonFinishCall.Name = "buttonFinishCall";
+            this.buttonFinishCall.Size = new System.Drawing.Size(149, 48);
+            this.buttonFinishCall.TabIndex = 5;
+            this.buttonFinishCall.Text = "Finish call";
+            this.buttonFinishCall.UseVisualStyleBackColor = true;
+            this.buttonFinishCall.Click += new System.EventHandler(this.button2_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(8F, 16F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(792, 450);
+            this.Controls.Add(this.buttonFinishCall);
             this.Controls.Add(this.button1);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.InputText);
             this.Controls.Add(this.TextPanel);
-            this.Controls.Add(this.buttonRecord);
+            this.Controls.Add(this.buttonStartCall);
             this.Name = "Form1";
             this.Text = "Form1";
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.Form1_FormClosed);
@@ -100,11 +112,12 @@
 
         #endregion
 
-        private System.Windows.Forms.Button buttonRecord;
+        private System.Windows.Forms.Button buttonStartCall;
         private System.Windows.Forms.TextBox TextPanel;
         private System.Windows.Forms.TextBox InputText;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button button1;
+        private System.Windows.Forms.Button buttonFinishCall;
     }
 }
 
