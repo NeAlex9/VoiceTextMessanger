@@ -8,6 +8,7 @@ using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -108,6 +109,14 @@ namespace AudioSender_Receiver1
 
         private void buttonRecord_Click_1(object sender, EventArgs e)
         {
+            string pattern = @"^(\d{1,4}\.){3}\d{1,4}$";
+            Regex reg = new Regex(pattern);
+            if (!reg.IsMatch(IPInput.Text))
+            {
+                MessageBox.Show("Wrong IP entered");
+                return;
+            }
+
             VoiceConnectionSubmiter.Send("Take a call?");
         }
 
@@ -115,6 +124,14 @@ namespace AudioSender_Receiver1
         {
             try
             {
+                string pattern = @"^(\d{1,4}\.){3}\d{1,4}$";
+                Regex reg = new Regex(pattern);
+                if (!reg.IsMatch(IPInput.Text))
+                {
+                    MessageBox.Show("Wrong IP entered");
+                    return;
+                }
+
                 TextPanel.Text += "me: " + InputText.Text + Environment.NewLine;
                 string user = userName.Text;
                 if (userName.Text == "")
@@ -164,6 +181,18 @@ namespace AudioSender_Receiver1
             buttonFinishCall.Enabled = false;
             buttonStartCall.Enabled = true;
             VoiceConnectionSubmiter.Send("Finished");
+        }
+
+        private void button2_Click_1(object sender, EventArgs e)
+        {
+            string pattern = @"^(\d{1,4}\.){3}\d{1,4}$"; 
+            Regex reg = new Regex(pattern);
+            if (!reg.IsMatch(IPInput.Text))
+            {
+                MessageBox.Show("Wrong IP entered");
+                return;
+            }
+
         }
     }
 }
